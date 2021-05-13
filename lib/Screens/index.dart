@@ -12,10 +12,47 @@ class _IndexScreenState extends State<IndexScreen> {
   double maxFirstLayerHeight = 450;
   bool showtitle = false;
   bool otherScroll = false;
+  ScrollController _controller;
+  @override
+  void initState() {
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+    super.initState();
+  }
+
+  _scrollListener() {
+    if (_controller.offset < 0) {
+      print(_controller.offset);
+      setState(() {
+        otherScroll = false;
+        double offSetData = 0;
+        if (_controller.offset < 0) offSetData = _controller.offset * -1;
+        print(offSetData / 10);
+        firstLayerHeight = 150 + 30 * (offSetData / 10);
+      });
+    }
+  }
+
+  // _moveUp() {
+  //   // _controller.jumpTo(pixelsToMove);
+  //   _controller.animateTo(
+  //       _controller.offset - MediaQuery.of(context).size.height,
+  //       curve: Curves.linear,
+  //       duration: Duration(milliseconds: 500));
+  // }
+
+  // _moveDown() {
+  //   _controller.animateTo(
+  //       _controller.offset + MediaQuery.of(context).size.height,
+  //       curve: Curves.linear,
+  //       duration: Duration(milliseconds: 500));
+  // }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
         backgroundColor: Color(0xFF191919),
         body: Stack(
@@ -23,26 +60,26 @@ class _IndexScreenState extends State<IndexScreen> {
             Container(
               height: firstLayerHeight,
               width: width,
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: [
-                            firstLayerHeight > 150 ? 0.5 : 1,
-                            1,
-                          ],
-                          colors: [
-                            Color(0xFF674843),
-                            Color(0xFF191919),
-                          ],
-                        ),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [
+                          firstLayerHeight > 150 ? 0.5 : 1,
+                          1,
+                        ],
+                        colors: [
+                          Color(0xFF674843),
+                          Color(0xFF191919),
+                        ],
                       ),
-                      padding: EdgeInsets.only(
-                          top: 20, bottom: firstLayerHeight > 150 ? 50 : 15),
+                    ),
+                    padding: EdgeInsets.only(
+                        top: 20, bottom: firstLayerHeight > 150 ? 50 : 15),
+                    child: SafeArea(
                       child: Stack(
                         children: [
                           Container(
@@ -79,8 +116,8 @@ class _IndexScreenState extends State<IndexScreen> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -129,59 +166,45 @@ class _IndexScreenState extends State<IndexScreen> {
                             ? firstLayerHeight - 55
                             : 52.5),
                     width: width,
-                    child: NotificationListener<ScrollEndNotification>(
-                      onNotification: (scrollEnd) {
-                        var metrics = scrollEnd.metrics;
-                        if (metrics.atEdge) {
-                          if (metrics.pixels == 0) {
-                            // print('At top');
-                            setState(() {
-                              otherScroll = false;
-                            });
-                          }
-                          // print('At bottom');
-                        }
-                        return true;
-                      },
-                      child: ListView(
-                        physics: otherScroll
-                            ? AlwaysScrollableScrollPhysics()
-                            : NeverScrollableScrollPhysics(),
-                        children: [
-                          Text(
-                            "Data",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
+                    child: ListView(
+                      physics: otherScroll
+                          ? BouncingScrollPhysics()
+                          : NeverScrollableScrollPhysics(),
+                      controller: _controller,
+                      children: [
+                        Text(
+                          "Data",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
                           ),
-                          Container(
-                            height: 400,
-                            width: width,
+                        ),
+                        Container(
+                          height: 400,
+                          width: width,
+                        ),
+                        Text(
+                          "Data",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
                           ),
-                          Text(
-                            "Data",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
+                        ),
+                        Container(
+                          height: 400,
+                          width: width,
+                        ),
+                        Text(
+                          "Data",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
                           ),
-                          Container(
-                            height: 400,
-                            width: width,
-                          ),
-                          Text(
-                            "Data",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
