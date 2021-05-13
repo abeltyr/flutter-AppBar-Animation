@@ -1,6 +1,6 @@
 # Flutter Skeleton
 
-This is a basic skeleton and rule i follow to make the coding phase easier
+This is a replica of spotify album detail screen
 
 ## File Formate
 
